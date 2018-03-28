@@ -1,18 +1,19 @@
-<img src="https://github.com/Kotlin/ktor/wiki/resources/ktor.png" alt="Ktor" width="600" style="max-width:100%;">
+<img src="http://ktor.io/assets/images/ktor_logo.png" alt="Ktor" width="600" style="max-width:100%;">
 
-[ ![Download](https://api.bintray.com/packages/kotlin/ktor/ktor/images/download.svg) ](https://bintray.com/kotlin/ktor/ktor/_latestVersion)
-[![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/KotlinTools_Ktor_Build.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=KotlinTools_Ktor_Build&branch_KotlinTools_Ktor=%3Cdefault%3E&tab=buildTypeStatusDiv)
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Official JetBrains project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Download](https://api.bintray.com/packages/kotlin/ktor/ktor/images/download.svg) ](https://bintray.com/kotlin/ktor/ktor/_latestVersion)
+[![TeamCity Build](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/KotlinTools_Ktor_BuildGradle.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=KotlinTools_Ktor_BuildGradle&branch_KotlinTools_Ktor=%3Cdefault%3E&tab=buildTypeStatusDiv)
+[![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Ktor is a framework for quickly creating web applications in Kotlin with minimal effort.
 
 ```kotlin
-import org.jetbrains.ktor.netty.*
-import org.jetbrains.ktor.routing.*
-import org.jetbrains.ktor.application.*
-import org.jetbrains.ktor.host.*
-import org.jetbrains.ktor.http.*
-import org.jetbrains.ktor.response.*
+import io.ktor.server.netty.*
+import io.ktor.routing.*
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.server.engine.*
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, 8080) {
@@ -28,111 +29,45 @@ fun main(args: Array<String>) {
 * Runs embedded web server on `localhost:8080`
 * Installs routing and responds with `Hello, world!` when receiving GET http request for root path
 
-## Documentation
-
-Please visit our [Documentation Wiki](https://github.com/Kotlin/ktor/wiki) for quick start, detailed explanations of
-features, usage and machinery. 
-
-If you want to contribute to Documentation please clone [Documentation Repository](https://github.com/Kotlin/ktor-wiki),
-edit it and send us a Pull Request. We will sync wiki in this project and that repository periodically as needed.
-
 ## Principles
 
-### Unopinionated
+#### Unopinionated
 
-Ktor Framework doesn't impose a lot of constraints on what technology a project is going to use – logging, templating, messaging, persistent, serializing, dependency injection, etc. Rarely it may be required to implement pretty simple interface, but usually it is a matter of writing a transforming or intercepting function. Features are installed into application using unified *interception* mechanism which allows building arbitrary pipelines. 
+Ktor Framework doesn't impose a lot of constraints on what technology a project is going to use – logging, 
+templating, messaging, persistent, serializing, dependency injection, etc. 
+Sometimes it may be required to implement a simple interface, but usually it is a matter of writing a 
+transforming or intercepting function. Features are installed into application using unified *interception* mechanism
+which allows building arbitrary pipelines. 
 
-Ktor Application can be hosted in any servlet container with Servlet 3.0+ API support such as Tomcat, or standalone using Netty or Jetty. Support for other hosts can be added, though admittedly it's not an easy task.
+Ktor Application can be hosted in any servlet container with Servlet 3.0+ API support such as Tomcat, or 
+standalone using Netty or Jetty. Support for other hosts can be added through the unified hosting API.
 
-Ktor APIs are mostly functions calls with lambdas. Thanks to Kotlin DSL capabilities, code looks declarative. Application composition is entirely developer's choice – with functions or classes, using dependency injection framework or doing it all manually in main function. 
+Ktor APIs are mostly functions calls with lambdas. Thanks to Kotlin DSL capabilities, code looks declarative. 
+Application composition is entirely developer's choice – with functions or classes, using dependency injection 
+framework or doing it all manually in main function. 
 
-### Asynchronous
+#### Asynchronous
 
-Ktor pipeline machinery and API is utilising a number of Kotlin features to provide easy-to-use asynchronous programming model without making it too cumbersome. 
+Ktor pipeline machinery and API is utilising Kotlin coroutines to provide easy-to-use asynchronous 
+programming model without making it too cumbersome. All host implementations are using asynchronous I/O facilities
+to avoid thread blocking. 
 
-### Testable
+#### Testable
 
-Ktor application can be hosted in a [TestHost](https://github.com/Kotlin/ktor/wiki/Testing), which emulates to some 
+Ktor application can be hosted in a special test environment, which emulates to some 
 extent web server without actually doing any networking. It provides easy way to test an application without mocking 
 too much stuff, and still achieve good performance while validating application calls. Integration tests with real 
 embedded web server are of course possible, too.
 
-## Features
+## Documentation
 
-In addition to core HTTP request processing and response building, Ktor provides a number of features out of the box, all implemented through its extensibility:
+Please visit [ktor.io](http://ktor.io) for Quick Start and detailed explanations of features, usage and machinery.
 
-* Routing: attaches code to specific path/query/method/header and extract parameters from placeholders
-* Sessions: stores and retrieves additional information attached to client session
-* Content transformations: transforms response content on the fly and utilise unified mechanism to build a response
-* Authentication: authenticates client using Basic, Digest, Form, OAuth (1a & 2)
-* Custom status pages: sends custom content for specific status responses such as 404 Not Found
-* Content type mapping: maps file extension to mime type for static file serving
-* Template engines: uses content transformation to enable transparent template engine usage
-* Static content: serves streams of data from local file system with full asynchronous support
-* HTTP core features
-    * Compression: enables gzip/deflate compression when client accepts it
-    * Conditional Headers: sends 304 Not Modified response when if-modified-since/etag indicate content is the same
-    * Partial Content: sends partial content for streaming ranges, like in video streams
-    * Automatic HEAD response: responds to HEAD requests by running through pipeline and dropping response body
-    * CORS: verifies and sends headers according to cross-origin resource sharing control
-    * HSTS and https redirect: supports strict transport security
-
-## Maven
-
-Add a repository
-
-```
-<repository>
-    <snapshots>
-        <enabled>false</enabled>
-    </snapshots>
-    <id>bintray-kotlin-ktor</id>
-    <name>bintray</name>
-    <url>https://dl.bintray.com/kotlin/ktor</url>
-</repository>
-```
-
-Add a dependency:
-
-```
-<dependency>
-    <groupId>org.jetbrains.ktor</groupId>
-    <artifactId>ktor-core</artifactId>
-    <version>${ktor.version}</version>
-</dependency>
-
-<!-- you also may need to include host implementation as well, for example
-
-<dependency>
-    <groupId>org.jetbrains.ktor</groupId>
-    <artifactId>ktor-jetty</artifactId>
-    <version>${ktor.version}</version>
-</dependency>
-
--->
-```
-
-## Gradle
-
-```
-repositories {
-    jcenter()
-    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
-    maven { url "https://dl.bintray.com/kotlin/ktor" }
-}
-```
-
-dependency:
-
-```
-dependencies {
-    compile "org.jetbrains.ktor:ktor-core:$ktorVersion"
-    // you may also need to include host implementation as well, for example
-    // compile "org.jetbrains.ktor:ktor-jetty:$ktorVersion"
-}
-```
+* Getting started with [Gradle](http://ktor.io/quickstart/gradle.html) 
+* Getting started with [Maven](http://ktor.io/quickstart/maven.html) 
+* Getting started with [IDEA](http://ktor.io/quickstart/intellij-idea.html) 
 
 ## Inspirations
 
-Wasabi, Kara
+Kotlin web frameworks such as Wasabi and Kara, which are currently deprecated. 
 
